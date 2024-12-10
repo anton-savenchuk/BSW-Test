@@ -1,0 +1,100 @@
+services:
+  line_provider:
+    build:
+      context: ./src/line_provider
+      dockerfile: dockerfile
+    container_name: bsw_line_provider
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./src/line_provider/src:/opt/line_provider/src
+    depends_on:
+      line_provider_db:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./src/line_provider/src
+          target: /opt/line_provider/src
+        - action: rebuild
+          path: ./pyproject.toml
+    command: sh -c 'poetry run uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload'
+
+  line_provider_db:
+    image: postgres:alpine
+    container_name: bsw_line_provider_db
+    restart: unless-stopped
+    ports:
+      - "15432:5432"
+    environment:
+      POSTGRES_DB: ${LINEPROVIDER_POSTGRES_DB}
+      POSTGRES_USER: ${LINEPROVIDER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${LINEPROVIDER_POSTGRES_PASSWORD}
+    volumes:
+      - line_provider_db_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${LINEPROVIDER_POSTGRES_USER} -d ${LINEPROVIDER_POSTGRES_DB}", "--quiet"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  bet_maker:
+    build:
+      context: ./src/bet_maker
+      dockerfile: dockerfile
+    container_name: bsw_bet_maker
+    restart: unless-stopped
+    ports:
+      - "8008:8000"
+    env_file:
+      - .env
+    volumes:
+      - ./src/bet_maker/src:/opt/bet_maker/src
+    depends_on:
+      bet_maker_db:
+        condition: service_healthy
+    develop:
+      watch:
+        - action: sync
+          path: ./src/bet_maker/src
+          target: /opt/bet_maker/src
+        - action: rebuild
+          path: ./pyproject.toml
+    command: sh -c 'poetry run uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload'
+
+  bet_maker_db:
+    image: postgres:alpine
+    container_name: bsw_bet_maker_db
+    restart: unless-stopped
+    ports:
+      - "25432:5432"
+    environment:
+      POSTGRES_DB: ${BETMAKER_POSTGRES_DB}
+      POSTGRES_USER: ${BETMAKER_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${BETMAKER_POSTGRES_PASSWORD}
+    volumes:
+      - bet_maker_db_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${BETMAKER_POSTGRES_USER} -d ${BETMAKER_POSTGRES_DB}", "--quiet"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:stable-alpine
+    container_name: bsw_nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./src/nginx:/etc/nginx/conf.d:ro
+    depends_on:
+      - line_provider
+      - bet_maker
+
+volumes:
+  line_provider_db_data:
+  bet_maker_db_data:

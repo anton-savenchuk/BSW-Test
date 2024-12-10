@@ -14,6 +14,7 @@ app = FastAPI(
         "name": "MIT",
         "url": "https://opensource.org/licenses/MIT",
     },
+    root_path="/line-provider",
 )
 
 

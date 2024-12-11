@@ -42,6 +42,9 @@ WORKDIR $PROJECT_PATH
 COPY ./pyproject.toml ./poetry.lock ./
 RUN poetry install --without dev && rm -rf $POETRY_CACHE_DIR/*
 
+# Import our project files
+COPY ./alembic.ini ./
+
 WORKDIR $APP_PATH
 COPY ./$APP_NAME ./
 

@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from src.exceptions import EventNotFound
 from src.schemas import EventSchema
 from src.services import EventService
 
@@ -26,3 +27,14 @@ async def get_events() -> list[EventSchema]:
     "Get all active events"
 
     return await EventService.get_all_active()
+
+
+@app.get("/events/{event_id}")
+async def get_event(id: int) -> EventSchema:
+    "Get an event by ID"
+
+    event = await EventService.get_one(event_id=id)
+    if not event:
+        raise EventNotFound
+
+    return event

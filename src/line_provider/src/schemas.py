@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
 
 from src.models import EventState
 
@@ -21,8 +21,14 @@ class EventCreateSchema(BaseModel):
     event_title: str = Field(..., description="Event name")
     coefficient: float = Field(..., description="Coefficient to event", ge=0)
     deadline: datetime = Field(
-        ..., description="Deadline datetime for the event"
+        ...,
+        description="Deadline datetime for the event, format YYYY-MM-DD HH:MM",
+        example=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
     )
+
+    @field_serializer("deadline", when_used="json")
+    def serialize_courses_in_order(self, deadline: datetime):
+        return deadline.strftime("%Y-%m-%d %H:%M")
 
     class Config:
         from_attributes = True

@@ -1,7 +1,7 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import Date, DECIMAL, Enum, String
+from sqlalchemy import DateTime, DECIMAL, Enum, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from src.core.database import Base
@@ -26,7 +26,7 @@ class Event(Base):
         nullable=False,
     )
     deadline: Mapped[datetime] = mapped_column(
-        Date,
+        DateTime,
         nullable=False,
     )
     state: Mapped[EventState] = mapped_column(

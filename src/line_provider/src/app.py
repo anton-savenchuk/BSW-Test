@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
-from src.exceptions import EventNotFound
-from src.schemas import EventSchema
+from src.exceptions import EventCannotBeAdded, EventNotFound
+from src.schemas import EventCreateSchema, EventSchema
 from src.services import EventService
 
 
@@ -38,3 +38,14 @@ async def get_event(id: int) -> EventSchema:
         raise EventNotFound
 
     return event
+
+
+@app.post("/events/create/")
+async def create_event(event: EventCreateSchema) -> EventSchema:
+    "Create new event"
+
+    new_event = await EventService.create_event(event)
+    if not new_event:
+        raise EventCannotBeAdded
+
+    return new_event

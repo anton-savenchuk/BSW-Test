@@ -3,6 +3,7 @@ from typing import Optional
 
 from pydantic import BaseModel, Field, field_serializer
 
+from src.core.config import settings
 from src.models import EventState
 
 
@@ -22,7 +23,7 @@ class EventCreateSchema(BaseModel):
     coefficient: float = Field(..., description="Coefficient to event", ge=0)
     deadline: datetime = Field(
         ...,
-        description="Deadline datetime for the event, format YYYY-MM-DD HH:MM",
+        description=f"Deadline datetime for the event, min {settings.TIMEDELTA} minutes before start, format YYYY-MM-DD HH:MM",
         example=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
     )
 

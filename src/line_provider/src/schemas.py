@@ -28,7 +28,7 @@ class EventCreateSchema(BaseModel):
     )
 
     @field_serializer("deadline", when_used="json")
-    def serialize_courses_in_order(self, deadline: datetime):
+    def serialize_format_deadline(self, deadline: datetime):
         return deadline.strftime("%Y-%m-%d %H:%M")
 
     class Config:
@@ -37,8 +37,18 @@ class EventCreateSchema(BaseModel):
 
 class EventUpdateSchema(EventIDSchema, BaseModel):
     event_title: Optional[str] = Field(None, description="Updated event name")
-    coefficient: Optional[float] = Field(None, description="Updated coefficient to event")
-    deadline: Optional[datetime] = Field(None, description="Updated deadline datetime for the event")
+    coefficient: Optional[float] = Field(
+        None, description="Updated coefficient to event"
+    )
+    deadline: Optional[datetime] = Field(
+        None,
+        description=f"Updated deadline datetime for the event, min {settings.TIMEDELTA} minutes before start, format YYYY-MM-DD HH:MM",
+        example=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),
+    )
+
+    @field_serializer("deadline", when_used="json")
+    def serialize_format_deadline(self, deadline: datetime):
+        return deadline.strftime("%Y-%m-%d %H:%M")
 
     class Config:
         from_attributes = True

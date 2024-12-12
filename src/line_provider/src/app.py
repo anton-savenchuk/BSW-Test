@@ -1,7 +1,11 @@
 from fastapi import FastAPI
 
-from src.exceptions import EventCannotBeAdded, EventNotFound
-from src.schemas import EventCreateSchema, EventSchema
+from src.exceptions import (
+    EventCannotBeAdded,
+    EventCannotBeUpdated,
+    EventNotFound,
+)
+from src.schemas import EventCreateSchema, EventSchema, EventUpdateSchema
 from src.services import EventService
 
 
@@ -49,3 +53,14 @@ async def create_event(event: EventCreateSchema) -> EventSchema:
         raise EventCannotBeAdded
 
     return new_event
+
+
+@app.patch("/events/update/")
+async def update_event(event: EventUpdateSchema) -> EventSchema:
+    "Event update"
+
+    updated_event = await EventService.update_event(event)
+    if not updated_event:
+        raise EventCannotBeUpdated
+
+    return updated_event

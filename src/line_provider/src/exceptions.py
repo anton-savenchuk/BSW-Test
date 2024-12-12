@@ -9,3 +9,8 @@ class EventNotFound(BaseHTTPException):
 class EventCannotBeAdded(BaseHTTPException):
     status_code = status.HTTP_409_CONFLICT
     detail = "Event cannot be added"
+
+
+class EventCannotBeUpdated(BaseHTTPException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = "Event cannot be updated"

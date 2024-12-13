@@ -34,10 +34,10 @@ async def get_events() -> list[EventSchema]:
 
 
 @app.get("/events/{event_id}")
-async def get_event(id: int) -> EventSchema:
+async def get_event(event_id: int) -> EventSchema:
     "Get an event by ID"
 
-    event = await EventService.get_one(event_id=id)
+    event = await EventService.get_one(event_id=event_id)
     if not event:
         raise EventNotFound
 

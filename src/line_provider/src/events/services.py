@@ -5,9 +5,9 @@ from sqlalchemy import insert, select
 from src.core.config import settings
 from src.core.database import async_session_maker
 from src.core.service import BaseService
-from src.exceptions import EventNotFound
-from src.models import Event
-from src.schemas import EventCreateSchema, EventSchema
+from src.events.exceptions import EventNotFound
+from src.events.models import Event
+from src.events.schemas import EventCreateSchema, EventSchema
 
 
 class EventService(BaseService):

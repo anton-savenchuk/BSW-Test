@@ -4,4 +4,4 @@ __all__ = [
 ]
 
 from src.core.database import Base
-from src.models import Event
+from src.events.models import Event

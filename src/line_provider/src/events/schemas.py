@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, field_serializer
 
 from src.core.config import settings
-from src.models import EventState
+from src.events.models import EventState
 
 
 class EventIDSchema(BaseModel):

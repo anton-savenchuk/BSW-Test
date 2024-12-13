@@ -13,3 +13,13 @@ class EventService:
                     return await response.json()
         except Exception as e:
             raise BaseHTTPException from e
+
+    @staticmethod
+    async def get_one(event_id: int):
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.get(f"http://line_provider:8000/line-provider/events/{event_id}") as response:
+                    response.raise_for_status()
+                    return await response.json()
+        except Exception as e:
+            raise BaseHTTPException from e

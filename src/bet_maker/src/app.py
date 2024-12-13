@@ -1,8 +1,6 @@
 from fastapi import FastAPI
 
-from src.events.exceptions import EventNotFound
-from src.events.schemas import EventSchema
-from src.events.services import EventService
+from src.events.routers import router as router_events
 
 
 app = FastAPI(
@@ -21,20 +19,4 @@ app = FastAPI(
     root_path="/bet-maker",
 )
 
-
-@app.get("/events/")
-async def get_events() -> list[EventSchema]:
-    "Get all active events"
-
-    return await EventService.get_all_active()
-
-
-@app.get("/events/{event_id}")
-async def get_event(event_id: int) -> EventSchema:
-    "Get an event by ID"
-
-    event = await EventService.get_one(event_id=event_id)
-    if not event:
-        raise EventNotFound
-
-    return event
+app.include_router(router_events)

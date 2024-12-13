@@ -1,6 +1,7 @@
 import aiohttp
 
-from core.exception import BaseHTTPException
+from src.core.exception import BaseHTTPException
+from src.events.exceptions import EventNotFound
 
 
 class EventService:
@@ -21,5 +22,7 @@ class EventService:
                 async with session.get(f"http://line_provider:8000/line-provider/events/{event_id}") as response:
                     response.raise_for_status()
                     return await response.json()
+        except aiohttp.ClientResponseError as e:
+            raise EventNotFound from e
         except Exception as e:
             raise BaseHTTPException from e

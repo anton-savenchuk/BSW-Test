@@ -1,5 +1,8 @@
 from fastapi import FastAPI
 
+from src.events.schemas import EventSchema
+from src.events.services import EventService
+
 
 app = FastAPI(
     title="A test service that accepts bets on events from the user.",
@@ -18,6 +21,8 @@ app = FastAPI(
 )
 
 
-@app.get("/")
-def hello():
-    return {"message": "Hello, World!"}
+@app.get("/events/")
+async def get_events() -> list[EventSchema]:
+    "Get all active events"
+
+    return await EventService.get_all_active()

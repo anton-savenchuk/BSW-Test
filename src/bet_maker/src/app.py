@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from src.bets.routers import router as router_bets
 from src.events.routers import router as router_events
 
 
@@ -20,3 +21,4 @@ app = FastAPI(
 )
 
 app.include_router(router_events)
+app.include_router(router_bets)

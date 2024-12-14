@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from src.bets.exceprions import BetCannotBePlace
+from src.bets.exceptions import BetCannotBePlace
 from src.bets.schemas import BetCreateSchema, BetSchema
 from src.bets.services import BetService
 

@@ -51,7 +51,7 @@
 
 ---
 
-Стек: `Python`, `FastAPI`, `SQLAlchemy`, `PostgreSQL`, `REST API`, `Docker Compose`, `Nginx`
+Стек: `Python`, `FastAPI`, `SQLAlchemy`, `PostgreSQL`, `REST API`, `RabbitMQ`, `Celery`, `Docker Compose`, `Nginx`
 
 ## Первичная настройка
 

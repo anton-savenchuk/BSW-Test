@@ -86,7 +86,7 @@ services:
   nginx:
     image: nginx:stable-alpine
     container_name: bsw_nginx
-    restart: unless-stopped
+    restart: always
     ports:
       - "80:80"
     volumes:
@@ -94,6 +94,41 @@ services:
     depends_on:
       - line_provider
       - bet_maker
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: bsw_rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "5672"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  celery:
+    build: ./src/line_provider
+    container_name: bsw_celery
+    restart: always
+    command: sh -c 'poetry run celery --app=src.core.celery:celery_app worker --loglevel=info'
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    env_file:
+      - .env
+
+  flower:
+    build:
+      context: ./src/line_provider
+    container_name: bsw_flower
+    restart: always
+    command: sh -c 'poetry run celery --app=src.core.celery:celery_app flower'
+    ports:
+      - 5555:5555
+    env_file:
+      - .env
 
 volumes:
   line_provider_db_data:

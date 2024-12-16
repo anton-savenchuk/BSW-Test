@@ -1,8 +1,8 @@
 """Create Bet tabel
 
-Revision ID: 7166f436f17c
+Revision ID: 40b785e2690d
 Revises: 
-Create Date: 2024-12-13 02:59:02.424149
+Create Date: 2024-12-16 12:00:20.122774
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '7166f436f17c'
+revision: str = '40b785e2690d'
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -23,6 +23,7 @@ def upgrade() -> None:
     op.create_table('bets',
     sa.Column('bet_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('event_id', sa.Integer(), nullable=False),
+    sa.Column('event_state', sa.Enum('NEW', 'FINISHED_WIN', 'FINISHED_LOSE', name='eventstate'), nullable=True),
     sa.Column('amount', sa.DECIMAL(precision=8, scale=2), nullable=False),
     sa.Column('created_at', sa.DateTime(), server_default=sa.text("TIMEZONE('utc', now())"), nullable=False),
     sa.PrimaryKeyConstraint('bet_id')

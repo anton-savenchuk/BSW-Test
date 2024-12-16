@@ -10,9 +10,10 @@ celery_app = Celery(
 )
 
 celery_app.conf.update(
-    task_routes={
-        "src.tasks.tasks": {"queue": "event-task"},
-    },
+    task_default_queue="event-tasks",
+    task_default_exchange="events",
+    task_default_exchange_type="direct",
+    task_default_routing_key="default",
     task_serializer="json",
     accept_content=["json"],
     result_serializer="json",

@@ -11,6 +11,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "3.10.15"
+aio-pika = "9.5.3"
 alembic = "1.14.0"
 asyncpg = "0.30.0"
 celery = "5.4.0"

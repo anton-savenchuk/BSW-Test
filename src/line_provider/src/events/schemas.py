@@ -35,7 +35,7 @@ class EventCreateSchema(BaseModel):
         from_attributes = True
 
 
-class EventUpdateSchema(EventIDSchema, BaseModel):
+class EventUpdateSchema(EventStateSchema, EventIDSchema):
     event_title: Optional[str] = Field(None, description="Updated event name")
     coefficient: Optional[float] = Field(
         None, description="Updated coefficient to event"

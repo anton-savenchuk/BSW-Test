@@ -7,7 +7,8 @@ from src.core.database import async_session_maker
 from src.core.service import BaseService
 from src.events.exceptions import EventNotFound
 from src.events.models import Event
-from src.events.schemas import EventCreateSchema, EventSchema
+from src.events.schemas import EventCreateSchema, EventUpdateSchema
+from src.tasks.tasks import complete_event
 
 
 class EventService(BaseService):
@@ -40,10 +41,18 @@ class EventService(BaseService):
                 if new_event:
                     await session.commit()
 
-                    return new_event.scalar()
+                    new_event = new_event.scalar()
+                    complete_event.apply_async(
+                        args=[
+                            new_event.event_id,
+                        ],
+                        eta=new_event.deadline,
+                    )
+
+                    return new_event
 
     @classmethod
-    async def update_event(cls, event: EventSchema):
+    async def update_event(cls, event: EventUpdateSchema):
         async with async_session_maker() as session:
             updated_event = await session.get(Event, event.event_id)
             if not updated_event:

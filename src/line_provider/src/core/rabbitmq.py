@@ -1,6 +1,6 @@
 import aio_pika
 
-from src.core.config import settings
+from src.core.config import overall_settings
 
 
 class AsyncRabbitMQConnection:
@@ -21,4 +21,4 @@ class AsyncRabbitMQConnection:
             await self.connection.close()
 
 
-async_rabbitmq_connection = AsyncRabbitMQConnection(settings.RABBITMQ_URL)
+async_rabbitmq_connection = AsyncRabbitMQConnection(overall_settings.RABBITMQ_URL)

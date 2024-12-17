@@ -31,6 +31,13 @@ class OverallSettings(BaseSettings):
     RABBITMQ_HOST: str
     RABBITMQ_PORT: int
 
+    RABBITMQ_EXCHANGE: str
+    RABBITMQ_QUEUE: str
+    RABBITMQ_EXCHANGE_TYPE: str
+    RABBITMQ_ROUTING_KEY: str
+
+    RABBITMQ_CELERY_QUEUE: str
+
     @property
     def RABBITMQ_URL(self) -> AmqpDsn:
         return f"amqp://{self.RABBITMQ_DEFAULT_USER}:{self.RABBITMQ_DEFAULT_PASS}@{self.RABBITMQ_HOST}:{self.RABBITMQ_PORT}//"

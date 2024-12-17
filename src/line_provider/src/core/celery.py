@@ -1,11 +1,11 @@
 from celery import Celery
 
-from src.core.config import settings
+from src.core.config import overall_settings
 
 
 celery_app = Celery(
     "tasks",
-    broker=settings.RABBITMQ_URL,
+    broker=overall_settings.RABBITMQ_URL,
     include=["src.tasks.tasks"],
 )
 

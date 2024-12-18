@@ -120,6 +120,17 @@ services:
         condition: service_healthy
     command: sh -c 'poetry run celery --app=src.core.celery:celery_app worker --hostname=line_provider@%h --loglevel=info'
 
+  celery_bet_maker:
+    build: ./src/bet_maker
+    container_name: bsw_celery_bet_maker
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: sh -c 'poetry run celery --app=src.core.celery:celery_app worker --hostname=bet_maker@%h --loglevel=info'
+
   flower:
     image: mher/flower
     container_name: bsw_flower

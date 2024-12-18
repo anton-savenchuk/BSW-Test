@@ -4,14 +4,13 @@ from aio_pika import IncomingMessage
 
 from src.core.config import overall_settings
 from src.core.rabbitmq import async_rabbitmq_connection
+from src.tasks.tasks import update_event_state
 
 
 async def handle_message(message: IncomingMessage):
     async with message.process():
         data = message.body.decode()
-        print(">->->->")
-        print(data)
-        print(">->->->")
+        update_event_state.delay(data)
 
 
 async def main():

@@ -4,13 +4,13 @@ from src.core.config import overall_settings
 
 
 celery_app = Celery(
-    "tasks",
+    "event-tasks",
     broker=overall_settings.RABBITMQ_URL,
     include=["src.tasks.tasks"],
 )
 
 celery_app.conf.update(
-    task_default_queue=overall_settings.RABBITMQ_CELERY_QUEUE,
+    task_default_queue=overall_settings.RABBITMQ_CELERY_EVENT_QUEUE,
     task_default_exchange=overall_settings.RABBITMQ_EXCHANGE,
     task_default_exchange_type=overall_settings.RABBITMQ_EXCHANGE_TYPE,
     task_default_routing_key=overall_settings.RABBITMQ_ROUTING_KEY,

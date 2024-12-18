@@ -51,12 +51,12 @@ async def update_event_state(event_id: EventIDSchema, event_state: EventStateSch
             durable=True,
         )
         await channel.declare_queue(
-            overall_settings.RABBITMQ_QUEUE,
+            overall_settings.RABBITMQ_CELERY_EVENT_STATE_QUEUE,
             durable=True,
         )
         await channel.default_exchange.publish(
             Message(
                 body=json.dumps(message).encode(),
             ),
-            routing_key=overall_settings.RABBITMQ_QUEUE,
+            routing_key=overall_settings.RABBITMQ_CELERY_EVENT_STATE_QUEUE,
         )

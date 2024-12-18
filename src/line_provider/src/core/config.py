@@ -34,11 +34,12 @@ class OverallSettings(BaseSettings):
     RABBITMQ_PORT: int
 
     RABBITMQ_EXCHANGE: str
-    RABBITMQ_QUEUE: str
     RABBITMQ_EXCHANGE_TYPE: str
     RABBITMQ_ROUTING_KEY: str
 
-    RABBITMQ_CELERY_QUEUE: str
+    RABBITMQ_CELERY_EVENT_QUEUE: str
+    RABBITMQ_CELERY_EVENT_STATE_QUEUE: str
+    RABBITMQ_CELERY_BET_QUEUE: str
 
     @property
     def RABBITMQ_URL(self) -> AmqpDsn:

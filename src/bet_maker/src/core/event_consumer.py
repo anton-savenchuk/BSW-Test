@@ -13,7 +13,7 @@ async def handle_message(message: IncomingMessage):
         update_event_state.delay(data)
 
 
-async def main():
+async def consumer_run():
     async with async_rabbitmq_connection as channel:
         await channel.declare_exchange(
             overall_settings.RABBITMQ_EXCHANGE,
@@ -32,9 +32,5 @@ async def main():
             await channel.close()
 
 
-def run():
-    asyncio.run(main())
-
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(consumer_run())

@@ -24,9 +24,6 @@ uvicorn = "0.32.1"
 aiohttp = "^3.11.10"
 
 
-[tool.poetry.scripts]
-event-consumer = "src.core.event_consumer:run"
-
 [tool.poetry.dev-dependencies]
 ruff = "*"
 

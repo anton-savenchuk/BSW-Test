@@ -1,0 +1,41 @@
+import asyncio
+
+from aio_pika import IncomingMessage
+
+from src.core.config import overall_settings
+from src.core.rabbitmq import async_rabbitmq_connection
+
+
+async def handle_message(message: IncomingMessage):
+    async with message.process():
+        data = message.body.decode()
+        print(">->->->")
+        print(data)
+        print(">->->->")
+
+
+async def main():
+    async with async_rabbitmq_connection as channel:
+        await channel.declare_exchange(
+            overall_settings.RABBITMQ_EXCHANGE,
+            overall_settings.RABBITMQ_EXCHANGE_TYPE,
+            durable=True,
+        )
+        queue = await channel.declare_queue(
+            overall_settings.RABBITMQ_CELERY_EVENT_STATE_QUEUE,
+            durable=True,
+        )
+        await queue.consume(handle_message)
+
+        try:
+            await asyncio.Future()
+        finally:
+            await channel.close()
+
+
+def run():
+    asyncio.run(main())
+
+
+if __name__ == "__main__":
+    asyncio.run(main())

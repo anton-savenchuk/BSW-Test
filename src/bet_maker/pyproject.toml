@@ -8,9 +8,11 @@ version = "0.1.0"
 description = "A test service that accepts bets on events from the user."
 authors = ["Anton Savenchuk <Savenchuk.dev@gmail.com>"]
 readme = "README.md"
+packages = [{ include = "*", from = "src" }]
 
 [tool.poetry.dependencies]
 python = "3.10.15"
+aio-pika = "9.5.3"
 alembic = "1.14.0"
 asyncpg = "0.30.0"
 fastapi = "0.115.6"
@@ -20,6 +22,9 @@ sqlalchemy = "2.0.36"
 uvicorn = "0.32.1"
 aiohttp = "^3.11.10"
 
+
+[tool.poetry.scripts]
+event-consumer = "src.core.event_consumer:run"
 
 [tool.poetry.dev-dependencies]
 ruff = "*"

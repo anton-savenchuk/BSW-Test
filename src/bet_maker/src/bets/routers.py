@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from src.bets.exceptions import BetCannotBePlace
-from src.bets.schemas import BetCreateSchema, BetSchema
+from src.bets.exceptions import BetCannotBePlace, BetCannotBeUpdated
+from src.bets.schemas import BetCreateSchema, BetSchema, BetUpdateSchema
 from src.bets.services import BetService
 
 
@@ -27,3 +27,14 @@ async def bet_event(bet: BetCreateSchema) -> BetSchema:
         raise BetCannotBePlace
 
     return new_bet
+
+
+@router.patch("/update/")
+async def update_bet(bet: BetUpdateSchema) -> BetSchema:
+    "Bet update"
+
+    updated_bet = await BetService.update_bet(bet)
+    if not updated_bet:
+        raise BetCannotBeUpdated
+
+    return updated_bet

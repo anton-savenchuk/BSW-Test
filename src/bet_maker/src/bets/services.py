@@ -2,8 +2,9 @@ from datetime import datetime, timezone
 
 from sqlalchemy import insert
 
+from src.bets.exceptions import BetNotFound
 from src.bets.models import Bet
-from src.bets.schemas import BetCreateSchema
+from src.bets.schemas import BetCreateSchema, BetUpdateSchema
 from src.core.database import async_session_maker
 from src.core.service import BaseService
 from src.events.schemas import EventSchema
@@ -33,3 +34,19 @@ class BetService(BaseService):
                     await session.commit()
 
                     return new_bet.scalar()
+
+    @classmethod
+    async def update_bet(cls, bet: BetUpdateSchema):
+        async with async_session_maker() as session:
+            updated_bet = await session.get(Bet, bet.bet_id)
+            if not updated_bet:
+                raise BetNotFound
+
+            updated_bet_data = bet.model_dump(exclude_unset=True)
+
+            for field, value in updated_bet_data.items():
+                setattr(updated_bet, field, value)
+
+            await session.commit()
+
+            return updated_bet

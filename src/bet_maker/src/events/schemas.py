@@ -2,6 +2,16 @@ from datetime import datetime, timezone
 
 from pydantic import BaseModel, Field, field_serializer
 
+from src.bets.models import EventState
+
+
+class EventIDSchema(BaseModel):
+    event_id: int
+
+
+class EventStateSchema(BaseModel):
+    state: EventState = Field(..., description="Event status")
+
 
 class EventSchema(BaseModel):
     event_id: int
@@ -17,5 +27,10 @@ class EventSchema(BaseModel):
     def serialize_format_deadline(self, deadline: datetime):
         return deadline.strftime("%Y-%m-%d %H:%M")
 
+    class Config:
+        from_attributes = True
+
+
+class EventUpdateSchema(EventStateSchema, EventIDSchema):
     class Config:
         from_attributes = True

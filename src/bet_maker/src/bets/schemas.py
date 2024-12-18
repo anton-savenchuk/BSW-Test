@@ -1,10 +1,20 @@
 from datetime import datetime, timezone
+from typing import Optional
 
 from pydantic import BaseModel, Field, field_serializer
+
+from src.bets.models import EventState
 
 
 class BetIDSchema(BaseModel):
     bet_id: int
+
+
+class BetStateSchema(BaseModel):
+    event_state: EventState = Field(..., description="Event status")
+
+    class Config:
+        from_attributes = True
 
 
 class BetCreateSchema(BaseModel):
@@ -15,7 +25,15 @@ class BetCreateSchema(BaseModel):
         from_attributes = True
 
 
-class BetSchema(BetCreateSchema, BetIDSchema):
+class BetUpdateSchema(BetStateSchema, BetIDSchema):
+    event_state: Optional[EventState] = Field(None)
+    amount: Optional[float] = Field(None)
+
+    class Config:
+        from_attributes = True
+
+
+class BetSchema(BetCreateSchema, BetStateSchema, BetIDSchema):
     created_at: datetime = Field(
         ...,
         example=datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M"),

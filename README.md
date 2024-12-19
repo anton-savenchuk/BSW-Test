@@ -140,7 +140,7 @@
 
 `POST /bets/bet/{event_id}`
 
-> Получить ставку по ID
+> Сделать ставку на событе по его ID
 
 `PATCH /bets/update/`
 

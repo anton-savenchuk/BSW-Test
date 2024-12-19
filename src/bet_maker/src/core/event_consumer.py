@@ -1,4 +1,5 @@
 import asyncio
+import json
 
 from aio_pika import IncomingMessage
 
@@ -9,8 +10,9 @@ from src.tasks.tasks import update_event_state
 
 async def handle_message(message: IncomingMessage):
     async with message.process():
-        data = message.body.decode()
-        update_event_state.delay(data)
+        data = message.body.decode("utf-8")
+        data: dict = json.loads(data)
+        update_event_state.delay(data.get("event_id"), data.get("state"))
 
 
 async def consumer_run():

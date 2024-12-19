@@ -1,4 +1,5 @@
 import asyncio
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
@@ -7,11 +8,15 @@ from src.core.event_consumer import consumer_run
 from src.events.routers import router as router_events
 
 
+@asynccontextmanager
 async def event_consumer_lifespan(app: FastAPI):
     current_loop = asyncio.get_event_loop()
-    current_loop.create_task(consumer_run())
-
-    yield
+    consumer_task = current_loop.create_task(consumer_run())
+    try:
+        yield
+    finally:
+        consumer_task.cancel()
+        await consumer_task
 
 
 app = FastAPI(

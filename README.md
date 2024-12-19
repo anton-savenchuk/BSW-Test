@@ -51,7 +51,19 @@
 
 ---
 
+## Реализация
+
 Стек: `Python`, `FastAPI`, `SQLAlchemy`, `PostgreSQL`, `REST API`, `RabbitMQ`, `Celery`, `Docker Compose`, `Nginx`
+
+В качестве взаимодействия между сервисами для получения статуса проведённого события был выбран вариант обмена сообщениями через очередь.
+
+#### Схема работы
+
+**Сервис line-provider**
+После регистрации события в сервисе `line-provider`, ставится задача на выполнение для **Celery** в `deadline`. По наступлению `deadline` задача обрабатывается, определяется статус события (WIN/LOSE), обновляется статус в БД, далее отправляется сообщение в **RabbitMQ** о завершении события и его новом статусе.
+
+**Сервис bet-maker**
+В сервисе `bet-maker` настроен **RabbitMQ consumer** для прослушивания очереди на наличии новых сообщений. Как только сообщения в очереди появляются, **consumer** ставит задачу на выполнение для **Celery**. Если в сервисе `bet-maker` есть ставки в которых учавствовало событие из сообщения, в соответствующих ставках обновляется статус (WIN/LOSE).
 
 ## Первичная настройка
 
@@ -80,3 +92,58 @@
 
 - API: [http://localhost/bet-maker/](http://localhost/bet-maker/)
 - Swagger (документация): [http://localhost/bet-maker/docs/](http://localhost/bet-maker/docs/)
+
+## API
+
+<details>
+<summary><h2>line-provider</h2></summary>
+
+**Events**
+
+`GET /events/`
+
+> Получить список активных событий
+
+`GET /events/{event_id}/`
+
+> Получить событие по ID
+
+`POST /events/create/`
+
+> Создать событие
+
+`PATCH /events/update/`
+
+> Обновить событие
+
+</details>
+
+<details>
+
+<summary><h2>bet-maker</h2></summary>
+
+**Events**
+
+`GET /events/`
+
+> Получить список активных событий из сервиса `line-provider`
+
+`GET /events/{event_id}/`
+
+> Получить событие по ID из сервиса `line-provider`
+
+**Bets**
+
+`GET /bets/`
+
+> Получить список сделанных ставок
+
+`POST /bets/bet/{event_id}`
+
+> Получить ставку по ID
+
+`PATCH /bets/update/`
+
+> Обновить ставку
+
+</details>

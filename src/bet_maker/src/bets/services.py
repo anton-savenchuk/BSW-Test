@@ -1,13 +1,13 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import insert
+from sqlalchemy import insert, select
 
 from src.bets.exceptions import BetNotFound
 from src.bets.models import Bet
 from src.bets.schemas import BetCreateSchema, BetUpdateSchema
 from src.core.database import async_session_maker
 from src.core.service import BaseService
-from src.events.schemas import EventSchema
+from src.events.schemas import EventIDSchema, EventSchema
 from src.events.services import EventService
 
 
@@ -50,3 +50,11 @@ class BetService(BaseService):
             await session.commit()
 
             return updated_bet
+
+    @classmethod
+    async def get_bets_with_event_id(cls, event_id: EventIDSchema):
+        async with async_session_maker() as session:
+            query = select(Bet.bet_id).where(Bet.event_id == event_id)
+            bets = await session.execute(query)
+
+            return bets.scalars().all()

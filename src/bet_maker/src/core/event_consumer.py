@@ -5,14 +5,14 @@ from aio_pika import IncomingMessage
 
 from src.core.config import overall_settings
 from src.core.rabbitmq import async_rabbitmq_connection
-from src.tasks.tasks import update_event_state
+from src.tasks.tasks import update_completed_event_state
 
 
 async def handle_message(message: IncomingMessage):
     async with message.process():
         data = message.body.decode("utf-8")
         data: dict = json.loads(data)
-        update_event_state.delay(data.get("event_id"), data.get("state"))
+        update_completed_event_state.delay(data.get("event_id"), data.get("state"))
 
 
 async def consumer_run():

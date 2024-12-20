@@ -2,7 +2,7 @@ import asyncio
 import json
 import random
 
-from aio_pika import Message
+import aio_pika
 
 from src.core.celery import celery_app
 from src.core.config import overall_settings
@@ -44,19 +44,10 @@ async def update_event_state(event_id: EventIDSchema, event_state: EventStateSch
         "state": event_state,
     }
 
-    async with async_rabbitmq_connection as channel:
-        await channel.declare_exchange(
-            overall_settings.RABBITMQ_EXCHANGE,
-            overall_settings.RABBITMQ_EXCHANGE_TYPE,
-            durable=True,
-        )
-        await channel.declare_queue(
-            overall_settings.RABBITMQ_CELERY_EVENT_STATE_QUEUE,
-            durable=True,
-        )
-        await channel.default_exchange.publish(
-            Message(
-                body=json.dumps(message).encode(),
+    async with async_rabbitmq_connection as (exchange, queue):
+        await exchange.publish(
+            aio_pika.Message(
+                body=json.dumps(message).encode("utf-8"),
             ),
-            routing_key=overall_settings.RABBITMQ_CELERY_EVENT_STATE_QUEUE,
+            routing_key=queue.name,
         )

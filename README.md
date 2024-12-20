@@ -53,7 +53,7 @@
 
 ## Реализация
 
-Стек: `Python`, `FastAPI`, `SQLAlchemy`, `PostgreSQL`, `REST API`, `RabbitMQ`, `Celery`, `Docker Compose`, `Nginx`
+Стек: `Python`, `AsyncIO`, `FastAPI`, `SQLAlchemy`, `PostgreSQL`, `REST API`, `RabbitMQ`, `Celery`, `Docker Compose`, `Nginx`
 
 В качестве взаимодействия между сервисами для получения статуса проведённого события был выбран вариант обмена сообщениями через очередь.
 
